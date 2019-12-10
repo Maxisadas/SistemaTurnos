@@ -26,6 +26,7 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
         pacienteDB = pacienteEncontrado[0];
 
     }else{
+        
         let paciente = new Paciente({
             nombre,
             apellido,
@@ -48,6 +49,7 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
         
         if(utils.verify_date(fechaTurno,horaTurno)){
             let fecha = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
+            
 
             let turno = new Turno({
                 fechaTurno: fecha,
@@ -98,10 +100,6 @@ routes.get('/buscarTurno/:id',async (req:Request, res:Response) =>{
         });
 
     });
-
-    
-
-
 
 
         

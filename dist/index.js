@@ -11,3 +11,4 @@ server.app.use(routesTurno_1.default);
 server.start(function () {
     console.log("Servidor corriendo en el puerto: ", process.env.PORT);
 });
+//# sourceMappingURL=index.js.map

@@ -11,3 +11,4 @@ else {
     urlDB = String(process.env.MONGO_URI);
 }
 process.env.urlDB = String(urlDB);
+//# sourceMappingURL=config.js.map

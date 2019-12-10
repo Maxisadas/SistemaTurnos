@@ -1,3 +1,5 @@
+import Turno from '../models/Turno';
+
 const utc_to_TimeZoneArgentina = (fechaTurno:String,horaTurno:String):Date => {
 
     //formato de la fecha "2000-12-25T17:00:00"
@@ -6,8 +8,11 @@ const utc_to_TimeZoneArgentina = (fechaTurno:String,horaTurno:String):Date => {
     let offset = fecha.getTimezoneOffset();
     fecha.setMinutes(fecha.getMinutes()-offset);
 
+
     return fecha
 }
+
+
 
 const dateNowUTC_to_TimeZoneArgentina = ():Date => {
 
@@ -33,7 +38,7 @@ const verify_date = (fechaTurno:String,horaTurno:String):Boolean => {
     }else{
         if(fecha.getFullYear() == fechaActual.getFullYear()){
             if(fecha.getMonth() >= fechaActual.getMonth()){
-                if(fecha.getDay() > fechaActual.getDay()){
+                if(fecha.getDate() > fechaActual.getDate()){
                     return true;
                     
                 }else{
@@ -60,5 +65,5 @@ const verify_date = (fechaTurno:String,horaTurno:String):Boolean => {
 export default {
     utc_to_TimeZoneArgentina,
     verify_date,
-    dateNowUTC_to_TimeZoneArgentina
+    dateNowUTC_to_TimeZoneArgentina,
 }

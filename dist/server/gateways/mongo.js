@@ -63,3 +63,4 @@ var conexionBD = function () { return __awaiter(void 0, void 0, void 0, function
     });
 }); };
 exports.default = conexionBD;
+//# sourceMappingURL=mongo.js.map

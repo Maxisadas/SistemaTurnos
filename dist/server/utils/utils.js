@@ -24,7 +24,7 @@ var verify_date = function (fechaTurno, horaTurno) {
     else {
         if (fecha.getFullYear() == fechaActual.getFullYear()) {
             if (fecha.getMonth() >= fechaActual.getMonth()) {
-                if (fecha.getDay() > fechaActual.getDay()) {
+                if (fecha.getDate() > fechaActual.getDate()) {
                     return true;
                 }
                 else {
@@ -53,5 +53,6 @@ var verify_date = function (fechaTurno, horaTurno) {
 exports.default = {
     utc_to_TimeZoneArgentina: utc_to_TimeZoneArgentina,
     verify_date: verify_date,
-    dateNowUTC_to_TimeZoneArgentina: dateNowUTC_to_TimeZoneArgentina
+    dateNowUTC_to_TimeZoneArgentina: dateNowUTC_to_TimeZoneArgentina,
 };
+//# sourceMappingURL=utils.js.map

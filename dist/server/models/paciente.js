@@ -9,3 +9,4 @@ var pacienteSchema = new Schema({
     edad: { type: Number, required: true }
 });
 exports.default = mongoose.model('Paciente', pacienteSchema);
+//# sourceMappingURL=Paciente.js.map
