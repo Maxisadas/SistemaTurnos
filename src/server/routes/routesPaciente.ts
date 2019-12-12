@@ -57,7 +57,7 @@ routes.post("/crearPaciente",async (req:Request,res:Response) => {
 
 });
 
-routes.put("/crearPaciente/:id", (req:Request,res:Response) => {
+routes.put("/actualizarPaciente/:id", (req:Request,res:Response) => {
 
     const{nombre,apellido,dni,edad} = req.body;
     const id = req.params.id;

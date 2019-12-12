@@ -28,13 +28,12 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
         })
     }
 
-    let PacienteConTurno =await Turno.find({paciente: pacienteDB[0]})
+    let PacienteConTurno =await Turno.find({estado:"Creado",paciente: pacienteDB[0]})
 
     if(PacienteConTurno.length == 0){
         
         if(utils.verify_date(fechaTurno,horaTurno)){
             let fecha = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
-            
 
             let turno = new Turno({
                 fechaTurno: fecha,
@@ -67,6 +66,7 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
         
 
     }else{
+
         res.status(400).json({
             err:true,
             message:"Usted ya posee un turno"
@@ -100,8 +100,71 @@ routes.get('/buscarTurno/:id',async (req:Request, res:Response) =>{
         
 });
 
-routes.put('/buscarTurno/:id',async (req:Request,res:Response) =>{
+routes.put('/actualizarTurno/:id',async (req:Request,res:Response) =>{
 
+    const id = req.params.id;
+    const {fechaTurno,horaTurno} = req.body;
+    
+    if(utils.verify_date(fechaTurno,horaTurno)){
+        let fecha = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
+
+        Turno.findByIdAndUpdate(id,{fechaTurno: fecha,fechaCreacion: utils.dateNowUTC_to_TimeZoneArgentina()},{new:true,runValidators:true}, (err,turnoDB) =>{
+        
+            if(err){
+                return res.status(400).json({
+                    error:true,
+                    message: err
+                })
+            }
+
+            if(!turnoDB){
+                return res.status(400).json({
+                    error:true,
+                    message: "El turno no se modifico con exito, por favor vuelva a intentarlo"
+                })
+            }else{
+
+                return res.json({
+                    message:"El turno se actualizo con exito",
+                    turnoDB
+                })
+            }
+
+        });
+    }
+    
+
+});
+
+routes.delete('/borrarTurno/:id',async (req:Request,res:Response) =>{
+
+    const id = req.params.id;
+
+    Turno.findByIdAndUpdate(id,{estado:"Vencido"},{new:true,runValidators:true}, (err,turnoDB) =>{
+    
+        if(err){
+            return res.status(400).json({
+                error:true,
+                message: err
+            })
+        }
+
+        if(!turnoDB){
+            return res.status(400).json({
+                error:true,
+                message: "El turno no se modifico con exito, por favor vuelva a intentarlo"
+            })
+        }else{
+
+            return res.json({
+                message: "Se dio de baja con exito",
+                turnoDB
+            })
+        }
+
+    });
+    
+    
 
 });
 

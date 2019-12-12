@@ -88,7 +88,7 @@ routes.post("/crearPaciente", function (req, res) { return __awaiter(void 0, voi
         }
     });
 }); });
-routes.put("/crearPaciente/:id", function (req, res) {
+routes.put("/actualizarPaciente/:id", function (req, res) {
     var _a = req.body, nombre = _a.nombre, apellido = _a.apellido, dni = _a.dni, edad = _a.edad;
     var id = req.params.id;
     Paciente_1.default.findByIdAndUpdate(id, { nombre: nombre, apellido: apellido, dni: dni, edad: edad }, { new: true, runValidators: true }, function (err, pacienteDB) {

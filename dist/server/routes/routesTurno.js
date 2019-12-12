@@ -65,7 +65,7 @@ routes.post('/crearTurno', function (req, res) { return __awaiter(void 0, void 0
                             message: "No se encuentra el paciente en el sistema"
                         })];
                 }
-                return [4 /*yield*/, Turno_1.default.find({ paciente: pacienteDB[0] })];
+                return [4 /*yield*/, Turno_1.default.find({ estado: "Creado", paciente: pacienteDB[0] })];
             case 2:
                 PacienteConTurno = _b.sent();
                 if (!(PacienteConTurno.length == 0)) return [3 /*break*/, 6];
@@ -128,8 +128,61 @@ routes.get('/buscarTurno/:id', function (req, res) { return __awaiter(void 0, vo
         }
     });
 }); });
-routes.put('/buscarTurno/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+routes.put('/actualizarTurno/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, _a, fechaTurno, horaTurno, fecha;
+    return __generator(this, function (_b) {
+        id = req.params.id;
+        _a = req.body, fechaTurno = _a.fechaTurno, horaTurno = _a.horaTurno;
+        if (utils_1.default.verify_date(fechaTurno, horaTurno)) {
+            fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno, horaTurno);
+            Turno_1.default.findByIdAndUpdate(id, { fechaTurno: fecha, fechaCreacion: utils_1.default.dateNowUTC_to_TimeZoneArgentina() }, { new: true, runValidators: true }, function (err, turnoDB) {
+                if (err) {
+                    return res.status(400).json({
+                        error: true,
+                        message: err
+                    });
+                }
+                if (!turnoDB) {
+                    return res.status(400).json({
+                        error: true,
+                        message: "El turno no se modifico con exito, por favor vuelva a intentarlo"
+                    });
+                }
+                else {
+                    return res.json({
+                        message: "El turno se actualizo con exito",
+                        turnoDB: turnoDB
+                    });
+                }
+            });
+        }
+        return [2 /*return*/];
+    });
+}); });
+routes.delete('/borrarTurno/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id;
     return __generator(this, function (_a) {
+        id = req.params.id;
+        Turno_1.default.findByIdAndUpdate(id, { estado: "Vencido" }, { new: true, runValidators: true }, function (err, turnoDB) {
+            if (err) {
+                return res.status(400).json({
+                    error: true,
+                    message: err
+                });
+            }
+            if (!turnoDB) {
+                return res.status(400).json({
+                    error: true,
+                    message: "El turno no se modifico con exito, por favor vuelva a intentarlo"
+                });
+            }
+            else {
+                return res.json({
+                    message: "Se dio de baja con exito",
+                    turnoDB: turnoDB
+                });
+            }
+        });
         return [2 /*return*/];
     });
 }); });
