@@ -16,36 +16,21 @@ routes.use(bodyParser.json())
 
 routes.post('/crearTurno',async (req:Request, res:Response) =>{
 
-    const {nombre,apellido,dni,edad,fechaTurno,horaTurno} = req.body;
-
-    let pacienteDB;
+    const {dni,fechaTurno,horaTurno} = req.body;
     let error:Boolean = false;
 
-    let pacienteEncontrado = await Paciente.find({dni});
-    if(pacienteEncontrado.length > 0 ){
-        pacienteDB = pacienteEncontrado[0];
+    let pacienteDB = await Paciente.find({dni});
 
-    }else{
-        
-        let paciente = new Paciente({
-            nombre,
-            apellido,
-            dni,
-            edad
-        });
-    
-    
-        pacienteDB = await paciente.save().catch( (err)=>{
-            error = true;
-            res.status(400).json({
-                err
-            });
-            
-        });
-
+    if(pacienteDB.length == 0){
+        return res.status(400).json({
+            error:true,
+            message: "No se encuentra el paciente en el sistema"
+        })
     }
 
-    if(!error){
+    let PacienteConTurno =await Turno.find({paciente: pacienteDB[0]})
+
+    if(PacienteConTurno.length == 0){
         
         if(utils.verify_date(fechaTurno,horaTurno)){
             let fecha = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
@@ -55,7 +40,7 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
                 fechaTurno: fecha,
                 fechaCreacion: utils.dateNowUTC_to_TimeZoneArgentina(),
                 estado: "Creado",
-                paciente: pacienteDB
+                paciente: pacienteDB[0]
             });
         
             let turnoDB = await turno.save().catch((err)=> {
@@ -73,13 +58,23 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
             }
 
         }else{
-            res.status(400).json({
+            return res.status(400).json({
                 err:true,
                 message:"La fecha que selecciono es incorrecto o la hora es incorrecto"
             })
         }
+    
+        
+
+    }else{
+        res.status(400).json({
+            err:true,
+            message:"Usted ya posee un turno"
+        })
 
     }
+
+
 
 
 });
@@ -105,5 +100,9 @@ routes.get('/buscarTurno/:id',async (req:Request, res:Response) =>{
         
 });
 
+routes.put('/buscarTurno/:id',async (req:Request,res:Response) =>{
+
+
+});
 
 export default routes;

@@ -41,97 +41,78 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var body_parser_1 = __importDefault(require("body-parser"));
-var Turno_1 = __importDefault(require("../models/Turno"));
 var Paciente_1 = __importDefault(require("../models/Paciente"));
-var utils_1 = __importDefault(require("../utils/utils"));
 var routes = express_1.Router();
 // parse application/x-www-form-urlencoded
 routes.use(body_parser_1.default.urlencoded({ extended: false }));
 // parse application/json
 routes.use(body_parser_1.default.json());
-routes.post('/crearTurno', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, dni, fechaTurno, horaTurno, error, pacienteDB, PacienteConTurno, fecha, turno, turnoDB;
+routes.post("/crearPaciente", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, nombre, apellido, dni, edad, pacienteDB, pacienteEncontrado, error_1, paciente;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, dni = _a.dni, fechaTurno = _a.fechaTurno, horaTurno = _a.horaTurno;
-                error = false;
+                _a = req.body, nombre = _a.nombre, apellido = _a.apellido, dni = _a.dni, edad = _a.edad;
                 return [4 /*yield*/, Paciente_1.default.find({ dni: dni })];
             case 1:
-                pacienteDB = _b.sent();
-                if (pacienteDB.length == 0) {
-                    return [2 /*return*/, res.status(400).json({
-                            error: true,
-                            message: "No se encuentra el paciente en el sistema"
-                        })];
-                }
-                return [4 /*yield*/, Turno_1.default.find({ paciente: pacienteDB[0] })];
+                pacienteEncontrado = _b.sent();
+                if (!(pacienteEncontrado.length > 0)) return [3 /*break*/, 2];
+                return [2 /*return*/, res.status(400).json({
+                        err: true,
+                        message: "Este paciente ya existe en el sistema"
+                    })];
             case 2:
-                PacienteConTurno = _b.sent();
-                if (!(PacienteConTurno.length == 0)) return [3 /*break*/, 6];
-                if (!utils_1.default.verify_date(fechaTurno, horaTurno)) return [3 /*break*/, 4];
-                fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno, horaTurno);
-                turno = new Turno_1.default({
-                    fechaTurno: fecha,
-                    fechaCreacion: utils_1.default.dateNowUTC_to_TimeZoneArgentina(),
-                    estado: "Creado",
-                    paciente: pacienteDB[0]
+                error_1 = false;
+                paciente = new Paciente_1.default({
+                    nombre: nombre,
+                    apellido: apellido,
+                    dni: dni,
+                    edad: edad
                 });
-                return [4 /*yield*/, turno.save().catch(function (err) {
-                        error = true;
-                        res.status(400).json({
+                return [4 /*yield*/, paciente.save().catch(function (err) {
+                        error_1 = false;
+                        return res.status(400).json({
                             err: err
                         });
                     })];
             case 3:
-                turnoDB = _b.sent();
-                if (!error) {
-                    res.json({
-                        turnoDB: turnoDB
-                    });
+                pacienteDB = _b.sent();
+                if (!error_1) {
+                    return [2 /*return*/, res.status(200).json({
+                            message: "El paciente se creo con exito",
+                            pacienteDB: pacienteDB
+                        })];
                 }
-                return [3 /*break*/, 5];
-            case 4: return [2 /*return*/, res.status(400).json({
-                    err: true,
-                    message: "La fecha que selecciono es incorrecto o la hora es incorrecto"
-                })];
-            case 5: return [3 /*break*/, 7];
-            case 6:
-                res.status(400).json({
-                    err: true,
-                    message: "Usted ya posee un turno"
+                _b.label = 4;
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+routes.put("/crearPaciente/:id", function (req, res) {
+    var _a = req.body, nombre = _a.nombre, apellido = _a.apellido, dni = _a.dni, edad = _a.edad;
+    var id = req.params.id;
+    Paciente_1.default.findByIdAndUpdate(id, { nombre: nombre, apellido: apellido, dni: dni, edad: edad }, { new: true, runValidators: true }, function (err, pacienteDB) {
+        if (err) {
+            return res.status(400).json({
+                error: true,
+                message: err
+            });
+        }
+        else {
+            if (pacienteDB) {
+                return res.json({
+                    message: "Se ha modificado con exito",
+                    pacienteDB: pacienteDB
                 });
-                _b.label = 7;
-            case 7: return [2 /*return*/];
+            }
+            else {
+                return res.json(400).json({
+                    error: true,
+                    message: "No se encontro al paciente"
+                });
+            }
         }
     });
-}); });
-routes.get('/buscarTurno/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var idPaciente;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                idPaciente = req.params.id;
-                return [4 /*yield*/, Turno_1.default.find({ paciente: idPaciente }).populate('paciente', 'nombre apellido').exec(function (err, turnosDB) {
-                        if (err) {
-                            return res.status(400).json({
-                                message: "El paciente no existe"
-                            });
-                        }
-                        res.json({
-                            turnosDB: turnosDB
-                        });
-                    })];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); });
-routes.put('/buscarTurno/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/];
-    });
-}); });
+});
 exports.default = routes;
-//# sourceMappingURL=routesTurno.js.map
+//# sourceMappingURL=routesPaciente.js.map
