@@ -41,78 +41,62 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
 var body_parser_1 = __importDefault(require("body-parser"));
-var Paciente_1 = __importDefault(require("../models/Paciente"));
+var Profesional_1 = __importDefault(require("../models/Profesional"));
 var routes = express_1.Router();
 // parse application/x-www-form-urlencoded
 routes.use(body_parser_1.default.urlencoded({ extended: false }));
 // parse application/json
 routes.use(body_parser_1.default.json());
-routes.post("/crearPaciente", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, nombre, apellido, dni, edad, pacienteDB, pacienteEncontrado, error_1, paciente;
+routes.post("/crearProfesional", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, nombre, apellido, especialidad, error, profesional;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, nombre = _a.nombre, apellido = _a.apellido, dni = _a.dni, edad = _a.edad;
-                return [4 /*yield*/, Paciente_1.default.find({ dni: dni })];
-            case 1:
-                pacienteEncontrado = _b.sent();
-                if (!(pacienteEncontrado.length > 0)) return [3 /*break*/, 2];
-                return [2 /*return*/, res.status(400).json({
-                        err: true,
-                        message: "Este paciente ya existe en el sistema"
-                    })];
-            case 2:
-                error_1 = false;
-                paciente = new Paciente_1.default({
+                _a = req.body, nombre = _a.nombre, apellido = _a.apellido, especialidad = _a.especialidad;
+                error = false;
+                profesional = new Profesional_1.default({
                     nombre: nombre,
                     apellido: apellido,
-                    dni: dni,
-                    edad: edad
+                    especialidad: especialidad
                 });
-                return [4 /*yield*/, paciente.save().catch(function (err) {
-                        error_1 = true;
+                return [4 /*yield*/, profesional.save().catch(function (err) {
+                        error = true;
                         return res.status(400).json({
-                            err: err
+                            error: true,
+                            message: err
                         });
                     })];
-            case 3:
-                pacienteDB = _b.sent();
-                if (!error_1) {
-                    return [2 /*return*/, res.status(200).json({
-                            message: "El paciente se creo con exito",
-                            pacienteDB: pacienteDB
+            case 1:
+                _b.sent();
+                if (!error) {
+                    return [2 /*return*/, res.json({
+                            message: "Se creo el profesional con exito"
                         })];
                 }
-                _b.label = 4;
-            case 4: return [2 /*return*/];
+                return [2 /*return*/];
         }
     });
 }); });
-routes.put("/actualizarPaciente/:id", function (req, res) {
-    var _a = req.body, nombre = _a.nombre, apellido = _a.apellido, dni = _a.dni, edad = _a.edad;
-    var id = req.params.id;
-    Paciente_1.default.findByIdAndUpdate(id, { nombre: nombre, apellido: apellido, dni: dni, edad: edad }, { new: true, runValidators: true }, function (err, pacienteDB) {
-        if (err) {
-            return res.status(400).json({
-                error: true,
-                message: err
-            });
-        }
-        else {
-            if (pacienteDB) {
-                return res.json({
-                    message: "Se ha modificado con exito",
-                    pacienteDB: pacienteDB
-                });
-            }
-            else {
-                return res.json(400).json({
-                    error: true,
-                    message: "No se encontro al paciente"
-                });
-            }
+routes.get("/buscarProfesional", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var profesionalesDB;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, Profesional_1.default.find()];
+            case 1:
+                profesionalesDB = _a.sent();
+                if (profesionalesDB.length > 0) {
+                    return [2 /*return*/, res.json({
+                            profesionalesDB: profesionalesDB
+                        })];
+                }
+                else {
+                    return [2 /*return*/, res.status(400).json({
+                            message: "No hay Profesionales cargados en el sistema"
+                        })];
+                }
+                return [2 /*return*/];
         }
     });
-});
+}); });
 exports.default = routes;
-//# sourceMappingURL=routesPaciente.js.map
+//# sourceMappingURL=routesProfesional.js.map

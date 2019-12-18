@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import Turno from '../models/Turno';
 import Paciente from '../models/Paciente';
 import utils from '../utils/utils';
+import Profesional from "../models/Profesional";
 
 
 
@@ -16,11 +17,12 @@ routes.use(bodyParser.json())
 
 routes.post('/crearTurno',async (req:Request, res:Response) =>{
 
-    const {dni,fechaTurno,horaTurno} = req.body;
+    const {dni,fechaTurno,horaTurno,idProfesional} = req.body;
     let error:Boolean = false;
 
     let pacienteDB = await Paciente.find({dni});
-
+    let profesionalDB = await Profesional.findById(idProfesional);
+    
     if(pacienteDB.length == 0){
         return res.status(400).json({
             error:true,
@@ -33,13 +35,21 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
     if(PacienteConTurno.length == 0){
         
         if(utils.verify_date(fechaTurno,horaTurno)){
-            let fecha = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
+            let fecha:Date = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
+            let hora:Number = fecha.getUTCHours();
+            if(hora < 8 || hora > 21){
 
+                return res.status(400).json({
+                    message:"No es posible crear el turno a ese horario, debido que la clinica esta cerrada"
+                });
+
+            }
             let turno = new Turno({
                 fechaTurno: fecha,
                 fechaCreacion: utils.dateNowUTC_to_TimeZoneArgentina(),
                 estado: "Creado",
-                paciente: pacienteDB[0]
+                paciente: pacienteDB[0],
+                profesional: profesionalDB
             });
         
             let turnoDB = await turno.save().catch((err)=> {

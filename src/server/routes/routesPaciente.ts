@@ -37,7 +37,7 @@ routes.post("/crearPaciente",async (req:Request,res:Response) => {
     
     
         pacienteDB = await paciente.save().catch( (err)=>{
-            error = false;
+            error = true;
             return res.status(400).json({
                 err
             });

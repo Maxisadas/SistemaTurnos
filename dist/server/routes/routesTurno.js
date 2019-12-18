@@ -44,21 +44,25 @@ var body_parser_1 = __importDefault(require("body-parser"));
 var Turno_1 = __importDefault(require("../models/Turno"));
 var Paciente_1 = __importDefault(require("../models/Paciente"));
 var utils_1 = __importDefault(require("../utils/utils"));
+var Profesional_1 = __importDefault(require("../models/Profesional"));
 var routes = express_1.Router();
 // parse application/x-www-form-urlencoded
 routes.use(body_parser_1.default.urlencoded({ extended: false }));
 // parse application/json
 routes.use(body_parser_1.default.json());
 routes.post('/crearTurno', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, dni, fechaTurno, horaTurno, error, pacienteDB, PacienteConTurno, fecha, turno, turnoDB;
+    var _a, dni, fechaTurno, horaTurno, idProfesional, error, pacienteDB, profesionalDB, PacienteConTurno, fecha, hora, turno, turnoDB;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _a = req.body, dni = _a.dni, fechaTurno = _a.fechaTurno, horaTurno = _a.horaTurno;
+                _a = req.body, dni = _a.dni, fechaTurno = _a.fechaTurno, horaTurno = _a.horaTurno, idProfesional = _a.idProfesional;
                 error = false;
                 return [4 /*yield*/, Paciente_1.default.find({ dni: dni })];
             case 1:
                 pacienteDB = _b.sent();
+                return [4 /*yield*/, Profesional_1.default.findById(idProfesional)];
+            case 2:
+                profesionalDB = _b.sent();
                 if (pacienteDB.length == 0) {
                     return [2 /*return*/, res.status(400).json({
                             error: true,
@@ -66,16 +70,23 @@ routes.post('/crearTurno', function (req, res) { return __awaiter(void 0, void 0
                         })];
                 }
                 return [4 /*yield*/, Turno_1.default.find({ estado: "Creado", paciente: pacienteDB[0] })];
-            case 2:
+            case 3:
                 PacienteConTurno = _b.sent();
-                if (!(PacienteConTurno.length == 0)) return [3 /*break*/, 6];
-                if (!utils_1.default.verify_date(fechaTurno, horaTurno)) return [3 /*break*/, 4];
+                if (!(PacienteConTurno.length == 0)) return [3 /*break*/, 7];
+                if (!utils_1.default.verify_date(fechaTurno, horaTurno)) return [3 /*break*/, 5];
                 fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno, horaTurno);
+                hora = fecha.getUTCHours();
+                if (hora < 8 || hora > 21) {
+                    return [2 /*return*/, res.status(400).json({
+                            message: "No es posible crear el turno a ese horario, debido que la clinica esta cerrada"
+                        })];
+                }
                 turno = new Turno_1.default({
                     fechaTurno: fecha,
                     fechaCreacion: utils_1.default.dateNowUTC_to_TimeZoneArgentina(),
                     estado: "Creado",
-                    paciente: pacienteDB[0]
+                    paciente: pacienteDB[0],
+                    profesional: profesionalDB
                 });
                 return [4 /*yield*/, turno.save().catch(function (err) {
                         error = true;
@@ -83,26 +94,26 @@ routes.post('/crearTurno', function (req, res) { return __awaiter(void 0, void 0
                             err: err
                         });
                     })];
-            case 3:
+            case 4:
                 turnoDB = _b.sent();
                 if (!error) {
                     res.json({
                         turnoDB: turnoDB
                     });
                 }
-                return [3 /*break*/, 5];
-            case 4: return [2 /*return*/, res.status(400).json({
+                return [3 /*break*/, 6];
+            case 5: return [2 /*return*/, res.status(400).json({
                     err: true,
                     message: "La fecha que selecciono es incorrecto o la hora es incorrecto"
                 })];
-            case 5: return [3 /*break*/, 7];
-            case 6:
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 res.status(400).json({
                     err: true,
                     message: "Usted ya posee un turno"
                 });
-                _b.label = 7;
-            case 7: return [2 /*return*/];
+                _b.label = 8;
+            case 8: return [2 /*return*/];
         }
     });
 }); });
