@@ -35,17 +35,19 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
     if(PacienteConTurno.length == 0){
         
         if(utils.verify_date(fechaTurno,horaTurno)){
-            let fecha:Date = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
-            let hora:Number = fecha.getUTCHours();
+            let fecha:Date = utils.utc_to_TimeZoneArgentina(fechaTurno);
+            let hora:Number = Number(horaTurno.slice(0,2));
+
             if(hora < 8 || hora > 21){
 
                 return res.status(400).json({
-                    message:"No es posible crear el turno a ese horario, debido que la clinica esta cerrada"
+                    message:"No es posible crear el turno a ese horario, debido a que no es horario de atencion"
                 });
 
             }
             let turno = new Turno({
                 fechaTurno: fecha,
+                horaTurno,
                 fechaCreacion: utils.dateNowUTC_to_TimeZoneArgentina(),
                 estado: "Creado",
                 paciente: pacienteDB[0],
@@ -89,15 +91,16 @@ routes.post('/crearTurno',async (req:Request, res:Response) =>{
 
 });
 
-routes.get('/buscarTurno/:id',async (req:Request, res:Response) =>{
+routes.get('/buscarTurnos/:fecha',async (req:Request, res:Response) =>{
 
-    let idPaciente = req.params.id;
+    let fechaTurno = req.params.fecha;
+    let fecha:Date = utils.utc_to_TimeZoneArgentina(fechaTurno);
 
-    await Turno.find({paciente: idPaciente}).populate('paciente','nombre apellido').exec((err,turnosDB) => {
+    await Turno.find({fechaTurno: fecha}).exec((err,turnosDB) => {
 
         if(err){
             return res.status(400).json({
-                message:"El paciente no existe"
+                message:"Formato incorrecto por favor introduzca la fecha en formato yyyy-mm-dd"
             })
         }
         res.json({
@@ -110,15 +113,17 @@ routes.get('/buscarTurno/:id',async (req:Request, res:Response) =>{
         
 });
 
+
+
 routes.put('/actualizarTurno/:id',async (req:Request,res:Response) =>{
 
     const id = req.params.id;
     const {fechaTurno,horaTurno} = req.body;
     
     if(utils.verify_date(fechaTurno,horaTurno)){
-        let fecha = utils.utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
+        let fecha = utils.utc_to_TimeZoneArgentina(fechaTurno);
 
-        Turno.findByIdAndUpdate(id,{fechaTurno: fecha,fechaCreacion: utils.dateNowUTC_to_TimeZoneArgentina()},{new:true,runValidators:true}, (err,turnoDB) =>{
+        Turno.findByIdAndUpdate(id,{fechaTurno: fecha,horaTurno,fechaCreacion: utils.dateNowUTC_to_TimeZoneArgentina()},{new:true,runValidators:true}, (err,turnoDB) =>{
         
             if(err){
                 return res.status(400).json({

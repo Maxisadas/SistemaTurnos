@@ -74,15 +74,16 @@ routes.post('/crearTurno', function (req, res) { return __awaiter(void 0, void 0
                 PacienteConTurno = _b.sent();
                 if (!(PacienteConTurno.length == 0)) return [3 /*break*/, 7];
                 if (!utils_1.default.verify_date(fechaTurno, horaTurno)) return [3 /*break*/, 5];
-                fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno, horaTurno);
-                hora = fecha.getUTCHours();
+                fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno);
+                hora = Number(horaTurno.slice(0, 2));
                 if (hora < 8 || hora > 21) {
                     return [2 /*return*/, res.status(400).json({
-                            message: "No es posible crear el turno a ese horario, debido que la clinica esta cerrada"
+                            message: "No es posible crear el turno a ese horario, debido a que no es horario de atencion"
                         })];
                 }
                 turno = new Turno_1.default({
                     fechaTurno: fecha,
+                    horaTurno: horaTurno,
                     fechaCreacion: utils_1.default.dateNowUTC_to_TimeZoneArgentina(),
                     estado: "Creado",
                     paciente: pacienteDB[0],
@@ -117,16 +118,17 @@ routes.post('/crearTurno', function (req, res) { return __awaiter(void 0, void 0
         }
     });
 }); });
-routes.get('/buscarTurno/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var idPaciente;
+routes.get('/buscarTurnos/:fecha', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var fechaTurno, fecha;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                idPaciente = req.params.id;
-                return [4 /*yield*/, Turno_1.default.find({ paciente: idPaciente }).populate('paciente', 'nombre apellido').exec(function (err, turnosDB) {
+                fechaTurno = req.params.fecha;
+                fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno);
+                return [4 /*yield*/, Turno_1.default.find({ fechaTurno: fecha }).exec(function (err, turnosDB) {
                         if (err) {
                             return res.status(400).json({
-                                message: "El paciente no existe"
+                                message: "Formato incorrecto por favor introduzca la fecha en formato yyyy-mm-dd"
                             });
                         }
                         res.json({
@@ -145,8 +147,8 @@ routes.put('/actualizarTurno/:id', function (req, res) { return __awaiter(void 0
         id = req.params.id;
         _a = req.body, fechaTurno = _a.fechaTurno, horaTurno = _a.horaTurno;
         if (utils_1.default.verify_date(fechaTurno, horaTurno)) {
-            fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno, horaTurno);
-            Turno_1.default.findByIdAndUpdate(id, { fechaTurno: fecha, fechaCreacion: utils_1.default.dateNowUTC_to_TimeZoneArgentina() }, { new: true, runValidators: true }, function (err, turnoDB) {
+            fecha = utils_1.default.utc_to_TimeZoneArgentina(fechaTurno);
+            Turno_1.default.findByIdAndUpdate(id, { fechaTurno: fecha, horaTurno: horaTurno, fechaCreacion: utils_1.default.dateNowUTC_to_TimeZoneArgentina() }, { new: true, runValidators: true }, function (err, turnoDB) {
                 if (err) {
                     return res.status(400).json({
                         error: true,

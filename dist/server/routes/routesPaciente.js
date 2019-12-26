@@ -114,5 +114,29 @@ routes.put("/actualizarPaciente/:id", function (req, res) {
         }
     });
 });
+routes.post("/buscarPaciente", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var dni, pacienteDB, paciente;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                dni = req.body.dni;
+                return [4 /*yield*/, Paciente_1.default.find({ dni: dni })];
+            case 1:
+                pacienteDB = _a.sent();
+                if (pacienteDB.length > 0) {
+                    paciente = pacienteDB[0];
+                    return [2 /*return*/, res.json({
+                            paciente: paciente
+                        })];
+                }
+                else {
+                    return [2 /*return*/, res.status(400).json({
+                            message: "Este paciente no existe en el sistema"
+                        })];
+                }
+                return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = routes;
 //# sourceMappingURL=routesPaciente.js.map

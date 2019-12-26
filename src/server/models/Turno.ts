@@ -5,6 +5,7 @@ var Schema = mongoose.Schema;
 
 var turnoSchema = new Schema({
     fechaTurno: {type:Date},
+    horaTurno:{type:String},
     fechaCreacion: {type:Date, unique:true},
     estado:{type:String},
     paciente:{type:Schema.Types.ObjectId, ref:'Paciente'},

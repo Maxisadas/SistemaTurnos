@@ -7,6 +7,7 @@ var mongoose_1 = __importDefault(require("mongoose"));
 var Schema = mongoose_1.default.Schema;
 var turnoSchema = new Schema({
     fechaTurno: { type: Date },
+    horaTurno: { type: String },
     fechaCreacion: { type: Date, unique: true },
     estado: { type: String },
     paciente: { type: Schema.Types.ObjectId, ref: 'Paciente' },

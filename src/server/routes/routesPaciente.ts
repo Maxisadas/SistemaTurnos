@@ -94,6 +94,30 @@ routes.put("/actualizarPaciente/:id", (req:Request,res:Response) => {
 
 });
 
+routes.post("/buscarPaciente",async (req:Request,res:Response) => {
+
+    const {dni} = req.body;
+
+    let pacienteDB = await Paciente.find({dni});
+
+    
+
+    if(pacienteDB.length>0){
+        let paciente = pacienteDB[0];
+        return res.json({
+            paciente
+        })
+
+    }else{
+        return res.status(400).json({
+            message:"Este paciente no existe en el sistema"
+        });
+    }
+
+
+
+});
+
 
 
 export default routes;

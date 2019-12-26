@@ -1,10 +1,10 @@
 import Turno from '../models/Turno';
 
-const utc_to_TimeZoneArgentina = (fechaTurno:String,horaTurno:String):Date => {
+const utc_to_TimeZoneArgentina = (fechaTurno:String):Date => {
 
     //formato de la fecha "2000-12-25T17:00:00"
 
-    let fecha = new Date(Date.parse(`${fechaTurno}T${horaTurno}`));
+    let fecha = new Date(Date.parse(`${fechaTurno}T00:00:00`));
     let offset = fecha.getTimezoneOffset();
     fecha.setMinutes(fecha.getMinutes()-offset);
 
@@ -29,8 +29,14 @@ const dateNowUTC_to_TimeZoneArgentina = ():Date => {
 const verify_date = (fechaTurno:String,horaTurno:String):Boolean => {
 
     //Metodo que verifica que la fecha ingresada, no sea una fecha anterior a la fecha actual. Es decir que ingresen una fecha del pasado.
-    let fecha = utc_to_TimeZoneArgentina(fechaTurno,horaTurno);
+    let fecha = new Date(Date.parse(`${fechaTurno}T00:00:00`));
     let fechaActual = dateNowUTC_to_TimeZoneArgentina();
+
+    fecha.setHours(Number(horaTurno.slice(0,2)));
+    fecha.setMinutes(Number(horaTurno.slice(3,5)));
+
+    let offset = fecha.getTimezoneOffset();
+    fecha.setMinutes(fecha.getMinutes()-offset);
 
 
     if(fecha.getFullYear() > fechaActual.getFullYear()){
