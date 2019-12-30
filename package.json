@@ -4,6 +4,9 @@
     "description": "sistema de turnos",
     "main": "index.js",
 
+    "devDependencies": {
+        "typescript": "3.3.3333"
+    },
     "scripts": {
         "build-ts": "tsc --build tsconfig.json",
         "postinstall": "npm run build-ts",
