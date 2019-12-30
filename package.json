@@ -5,7 +5,7 @@
     "main": "index.js",
 
     "scripts": {
-        "build-ts": "tsc",
+        "build-ts": "tsc --build tsconfig.json",
         "postinstall": "npm run build-ts",
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node ./dist/index.js",
