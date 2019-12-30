@@ -7,7 +7,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "movePublic": "copyfiles -u 1 src/public/* dist && copyfiles -u 1 src/public/img/* dist && copyfiles -u 1 src/public/css/* dist && copyfiles -u 1 src/public/js/* dist && copyfiles -u 1 src/public/locales/* dist",
         "build": "tsc && npm run movePublic",
-        "start": "npm run build"
+        "start": "dist/index.js"
     },
     "author": "Maxi Guerrero",
     "license": "ISC",
