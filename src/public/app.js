@@ -342,8 +342,11 @@ function mostrarContenido(estado) {
             break;
         case "Confirmar":
             let fechaMostrar = fecha.replace("-", "/").replace("-", "/");
-            $('#container').empty();
-            $('#container').append(`
+            fechaAhora = new Date();
+
+            if (Number(horario.substr(0, 2)) >= fechaAhora.getHours()) {
+                $('#container').empty();
+                $('#container').append(`
             <form class="shadow-lg p-3 mb-5 bg-white rounded" id="form">
                     <h3 class="text-center text-uppercase mb-4">Confirmar turno</h3>
                     <div class="form-row">
@@ -396,6 +399,21 @@ function mostrarContenido(estado) {
 
                 </form>
             `)
+
+            } else {
+                $('#container').empty();
+                $('#container').append(`
+                
+                <form class="shadow-lg p-3 mb-5 bg-white rounded" id="form">
+                <h3 class="text-center text-uppercase mb-4">¡El horario es incorrecto, ya paso esa hora del turno!</h3>
+                <h5 class="text-center text-uppercase mb-4">Vuelva a intertarlo con un horario mas actual</h5>
+                <div class="form-group row">
+                    <button type="button " class="btn btn-primary mx-auto" id="Finalizar">Volver a la pagina de inicio</button>
+                </div>
+            </form>
+                `);
+            }
+
 
 
 

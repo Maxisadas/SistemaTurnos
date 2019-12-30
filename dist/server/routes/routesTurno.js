@@ -153,9 +153,16 @@ routes.get('/buscarTurno/:idPaciente', function (req, res) { return __awaiter(vo
                                 message: "No se un turno relacionado con el paciente"
                             });
                         }
-                        res.json({
-                            turnosDB: turnosDB
-                        });
+                        if (turnosDB.length > 0) {
+                            return res.json({
+                                turnosDB: turnosDB
+                            });
+                        }
+                        else {
+                            return res.status(400).json({
+                                message: "No se un turno relacionado con el paciente"
+                            });
+                        }
                     })];
             case 1:
                 _a.sent();
