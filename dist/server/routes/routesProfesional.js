@@ -98,5 +98,28 @@ routes.get("/buscarProfesional", function (req, res) { return __awaiter(void 0, 
         }
     });
 }); });
+routes.get("/buscarProfesionale/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, profesionalDB;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                return [4 /*yield*/, Profesional_1.default.findById(id)];
+            case 1:
+                profesionalDB = _a.sent();
+                if (profesionalDB) {
+                    return [2 /*return*/, res.json({
+                            profesionalDB: profesionalDB
+                        })];
+                }
+                else {
+                    return [2 /*return*/, res.status(400).json({
+                            message: "No hay Profesionales cargados en el sistema"
+                        })];
+                }
+                return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = routes;
 //# sourceMappingURL=routesProfesional.js.map

@@ -141,6 +141,28 @@ routes.get('/buscarTurnos/:fecha', function (req, res) { return __awaiter(void 0
         }
     });
 }); });
+routes.get('/buscarTurno/:idPaciente', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var idPaciente;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                idPaciente = req.params.idPaciente;
+                return [4 /*yield*/, Turno_1.default.find({ paciente: idPaciente }).populate({ path: "paciente" }).populate({ path: "profesional" }).exec(function (err, turnosDB) {
+                        if (err) {
+                            return res.status(400).json({
+                                message: "No se un turno relacionado con el paciente"
+                            });
+                        }
+                        res.json({
+                            turnosDB: turnosDB
+                        });
+                    })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); });
 routes.put('/actualizarTurno/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, _a, fechaTurno, horaTurno, fecha;
     return __generator(this, function (_b) {

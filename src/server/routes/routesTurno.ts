@@ -113,6 +113,28 @@ routes.get('/buscarTurnos/:fecha',async (req:Request, res:Response) =>{
         
 });
 
+routes.get('/buscarTurno/:idPaciente',async (req:Request, res:Response) =>{
+
+    let idPaciente = req.params.idPaciente;
+ 
+
+    await Turno.find({paciente:idPaciente}).populate({path:"paciente"}).populate({path:"profesional"}).exec((err,turnosDB) => {
+
+        if(err){
+            return res.status(400).json({
+                message:"No se un turno relacionado con el paciente"
+            })
+        }
+        res.json({
+            turnosDB
+        });
+
+    });
+
+
+        
+});
+
 
 
 routes.put('/actualizarTurno/:id',async (req:Request,res:Response) =>{

@@ -55,6 +55,24 @@ routes.get("/buscarProfesional", async (req:Request,res:Response)=> {
 
 });
 
+routes.get("/buscarProfesionale/:id", async (req:Request,res:Response)=> {
+    const id = req.params.id;
+    let profesionalDB = await Profesional.findById(id);
+
+    if(profesionalDB){
+
+        return res.json({
+            profesionalDB
+        });
+
+    }else{
+        return res.status(400).json({
+            message: "No hay Profesionales cargados en el sistema"
+        })
+    }
+
+});
+
 
 
 
