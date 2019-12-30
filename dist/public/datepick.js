@@ -3,7 +3,7 @@ $(document).on('click', '.custom-date .control-date', function() {
         language: "es",
         daysOfWeekDisabled: "0,6",
         daysOfWeekHighlighted: "1",
-        startDate: new Date(),
+        startDate: '+1d',
         dateFormat: 'yy/mm/dd',
         autoclose: true,
         todayHighlight: true
